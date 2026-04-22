@@ -42,9 +42,23 @@ class Order:
     def __str__ (self):
         return f"Item1: {self.items}"
     
+    def show_order(self):
+      print ("TU ORDEN:")
+      print("-------------------")
+    
+      for item in self.items:
+
+        if isinstance(item, Drink):
+            print(f"{item.name} ({item.size}) - ${item.price}")
+        else:
+            print(f"{item.name} - ${item.price}")
+    
+        print("-------------------")
+        print(f"TOTAL: ${self.calculate_total()}")
+    
 aperitvo1 = Appetizer("Nachos" , 6)
 aperitvo2 = Appetizer("Alitas", 9)
-
+ 
 principal1 = MainCourse("Pizza", 10)
 principal2 = MainCourse("Hamburguesa", 9)
 principal3 = MainCourse("Pasta", 11)
@@ -56,11 +70,47 @@ bebida3 = Drink("Jugo", 6, "mediano")
 postre1 = MenuItem("Helado", 3)
 postre2 = MenuItem("Torta", 4)
 
-orden1 = Order ()
-orden1.add_item(aperitvo1)
-orden1.add_item(principal1)
-orden1.add_item(bebida2)
-orden1.add_item(postre1)
+print("===== PRUEBA DEL SISTEMA =====")
 
-print(orden1.calculate_total())
-print(orden1)
+order = Order()
+
+# Agregar items
+order.add_item(Appetizer("Nachos", 6))
+order.add_item(Appetizer("Alitas", 9))
+order.add_item(MainCourse("Pizza", 10))
+order.add_item(Drink("Coca-Cola", 3, "Grande"))
+
+# Mostrar orden
+order.show_order()
+
+print("\n===== PRUEBAS INDIVIDUALES =====")
+
+# Test sin descuento
+order1 = Order()
+order1.add_item(MainCourse("Pizza", 10))
+order1.add_item(Drink("Agua", 2, "Pequeña"))
+print("Total esperado 12:", order1.calculate_total())
+
+# Test descuento 10%
+order2 = Order()
+order2.add_item(Appetizer("Nachos", 6))
+order2.add_item(Appetizer("Alitas", 9))
+order2.add_item(MainCourse("Pizza", 10))
+print("Total esperado 22.5:", order2.calculate_total())
+
+# Test descuento 20%
+order3 = Order()
+order3.add_item(MainCourse("Pizza", 10))
+order3.add_item(MainCourse("Hamburguesa", 12))
+order3.add_item(MainCourse("Pasta", 10))
+print("Total esperado 25.6:", order3.calculate_total())
+
+print("\n===== TEST DE DIFERENTES TIPOS =====")
+
+drink = Drink("Jugo", 4, "Mediano")
+app = Appetizer("Papas", 5)
+main = MainCourse("Lasagna", 11)
+
+print(drink.name, drink.price, drink.size)
+print(app.name, app.price)
+print(main.name, main.price)
