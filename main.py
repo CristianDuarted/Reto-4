@@ -30,7 +30,17 @@ class Order:
         total = 0.0
         for item in self.items:
             total += item.calculate_price()
+        
+        if total > 20:
+            discount = total * 0.10
+            total -= discount 
+
+        if total > 30:
+            discount = total * 0.20
+            total -= discount     
         return total
+    def __str__ (self):
+        return f"Item1: {self.items}"
     
 aperitvo1 = Appetizer("Nachos" , 6)
 aperitvo2 = Appetizer("Alitas", 9)
@@ -46,10 +56,11 @@ bebida3 = Drink("Jugo", 6, "mediano")
 postre1 = MenuItem("Helado", 3)
 postre2 = MenuItem("Torta", 4)
 
-orden1 =Order ()
+orden1 = Order ()
 orden1.add_item(aperitvo1)
 orden1.add_item(principal1)
 orden1.add_item(bebida2)
 orden1.add_item(postre1)
 
 print(orden1.calculate_total())
+print(orden1)
