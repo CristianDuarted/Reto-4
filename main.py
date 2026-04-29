@@ -1,15 +1,35 @@
 class MenuItem:
     def __init__ (self, name:str, price:float):
-        self.name = name
-        self.price = price
+        self._name = name
+        self._price = price
+    def get_name(self):
+        return self._name
+
+    def set_name(self, name):
+        self._name = name
+
+    def get_price(self):
+        return self._price
+    def set_price(self, price):
+        self._price = price
 
     def calculate_price(self):
-        return self.price  
+        return self._price  
+        
+
 
 class Drink(MenuItem):
     def __init__(self, name: str, price: float, size: str):
         super ().__init__(name, price)
-        self.size = size
+        self._size = size
+   
+    def get_size(self):
+        return self._size
+
+    def set_size(self, size):
+   
+        self._size = size
+
 
 class Appetizer(MenuItem):
     def __init__(self, name: str, price: float):
@@ -28,17 +48,22 @@ class Order:
 
     def calculate_total(self) -> float:
         total = 0.0
-        for item in self.items:
-            total += item.calculate_price()
-        
-        if total > 20:
-            discount = total * 0.10
-            total -= discount 
+        has_main = False
 
-        if total > 30:
-            discount = total * 0.20
-            total -= discount     
+        for item in self.items:
+            if isinstance(item,MainCourse):
+                has_main =True 
+
+        for item in self.items:
+            price = item.calculate_price()
+
+            if has_main and isinstance(item, Drink):
+                 price *= 0.9   # 10% descuento
+
+            total += price  
         return total
+    
+
     def __str__ (self):
         return f"Item1: {self.items}"
     
@@ -49,68 +74,108 @@ class Order:
       for item in self.items:
 
         if isinstance(item, Drink):
-            print(f"{item.name} ({item.size}) - ${item.price}")
+            print(f"{item.get_name()} ({item.get_size()}) - ${item.get_price()}")
         else:
-            print(f"{item.name} - ${item.price}")
+            print(f"{item.get_name()} - ${item.get_price()}")
     
         print("-------------------")
         print(f"TOTAL: ${self.calculate_total()}")
-    
-aperitvo1 = Appetizer("Nachos" , 6)
-aperitvo2 = Appetizer("Alitas", 9)
- 
-principal1 = MainCourse("Pizza", 10)
-principal2 = MainCourse("Hamburguesa", 9)
-principal3 = MainCourse("Pasta", 11)
 
-bebida = Drink("Coca-Cola", 5, "grande")
-bebida2 = Drink("Agua", 3, "pequeña")
-bebida3 = Drink("Jugo", 6, "mediano")
+class Payment:
+    def __init__(self, amount: float):
+        self._amount = amount
 
-postre1 = MenuItem("Helado", 3)
-postre2 = MenuItem("Torta", 4)
+    def pay(self):
+        print(f"Pagando ${self._amount}")
 
+class CardPayment(Payment):
+    def pay(self):
+        print(f"Pagando con tarjeta: ${self._amount}")
+
+class CashPayment(Payment):
+    def pay(self):
+        print(f"Pagando en efectivo: ${self._amount}")
+
+   
+     
 print("===== PRUEBA DEL SISTEMA =====")
 
 order = Order()
-
-# Agregar items
 order.add_item(Appetizer("Nachos", 6))
 order.add_item(Appetizer("Alitas", 9))
 order.add_item(MainCourse("Pizza", 10))
 order.add_item(Drink("Coca-Cola", 3, "Grande"))
 
-# Mostrar orden
 order.show_order()
+print(f"Total esperado: 27.7")
+print(f"Total obtenido: {order.calculate_total()}")
 
-print("\n===== PRUEBAS INDIVIDUALES =====")
 
-# Test sin descuento
+print("\n===== PRUEBA SIN PLATO PRINCIPAL =====")
+
 order1 = Order()
-order1.add_item(MainCourse("Pizza", 10))
+order1.add_item(Appetizer("Nachos", 6))
 order1.add_item(Drink("Agua", 2, "Pequeña"))
-print("Total esperado 12:", order1.calculate_total())
 
-# Test descuento 10%
+order1.show_order()
+print(f"Total esperado: 8")
+print(f"Total obtenido: {order1.calculate_total()}")
+
+
+print("\n===== PRUEBA CON PLATO PRINCIPAL + BEBIDA =====")
+
 order2 = Order()
-order2.add_item(Appetizer("Nachos", 6))
-order2.add_item(Appetizer("Alitas", 9))
 order2.add_item(MainCourse("Pizza", 10))
-print("Total esperado 22.5:", order2.calculate_total())
+order2.add_item(Drink("Agua", 2, "Pequeña"))
 
-# Test descuento 20%
+order2.show_order()
+print(f"Total esperado: 11.8")
+print(f"Total obtenido: {order2.calculate_total()}")
+
+
+print("\n===== PRUEBA CON VARIOS PLATOS PRINCIPALES =====")
+
 order3 = Order()
 order3.add_item(MainCourse("Pizza", 10))
-order3.add_item(MainCourse("Hamburguesa", 12))
-order3.add_item(MainCourse("Pasta", 10))
-print("Total esperado 25.6:", order3.calculate_total())
+order3.add_item(MainCourse("Hamburguesa", 9))
+order3.add_item(MainCourse("Pasta", 11))
 
-print("\n===== TEST DE DIFERENTES TIPOS =====")
+order3.show_order()
+print(f"Total esperado: 30")
+print(f"Total obtenido: {order3.calculate_total()}")
 
-drink = Drink("Jugo", 4, "Mediano")
-app = Appetizer("Papas", 5)
-main = MainCourse("Lasagna", 11)
 
-print(drink.name, drink.price, drink.size)
-print(app.name, app.price)
-print(main.name, main.price)
+print("\n===== PRUEBA CON VARIAS BEBIDAS Y PLATO PRINCIPAL =====")
+
+order4 = Order()
+order4.add_item(MainCourse("Hamburguesa", 9))
+order4.add_item(Drink("Coca-Cola", 5, "Grande"))
+order4.add_item(Drink("Jugo", 6, "Mediano"))
+order4.add_item(Appetizer("Papas", 5))
+
+order4.show_order()
+print(f"Total esperado: 23.9")
+print(f"Total obtenido: {order4.calculate_total()}")
+
+
+print("\n===== PRUEBA GETTERS Y SETTERS =====")
+
+drink = Drink("Jugo", 6, "Mediano")
+print(drink.get_name())
+print(drink.get_price())
+print(drink.get_size())
+
+drink.set_name("Limonada")
+drink.set_price(7)
+drink.set_size("Grande")
+
+print(drink.get_name())
+print(drink.get_price())
+print(drink.get_size())
+
+
+print("\n===== PRUEBA PAYMENT =====")
+
+total = order4.calculate_total()
+payment = Payment(total)
+payment.pay()
