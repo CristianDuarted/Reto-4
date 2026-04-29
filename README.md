@@ -55,9 +55,3 @@ Se implementa un sistema simple de pedidos de restaurante.
 
 Si el pedido contiene al menos un MainCourse, se aplica un 10% de descuento a las bebidas.
 
-## Ejecución
-
-Para ejecutar los programas:
-
-```bash
-python3 main.py
